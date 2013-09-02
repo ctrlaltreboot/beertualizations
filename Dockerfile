@@ -7,8 +7,6 @@ MAINTAINER ctrlaltreboot "ctrlaltreboot@gmail.com"
 
 # Freshen
 RUN apt-get -y update
-RUN apt-get install -y wget curl git-core opensshd-server
+RUN apt-get install -y upstart wget curl git-core openssh-server
 RUN mkdir /var/run/sshd
-RUN service ssh start
-RUN update-rc.d ssh defaults
 EXPOSE 22
