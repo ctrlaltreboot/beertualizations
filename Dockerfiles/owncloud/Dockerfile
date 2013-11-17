@@ -16,8 +16,3 @@ RUN apt-get -y update
 RUN apt-get install -y owncloud
 RUN a2enmod rewrite
 RUN a2enmod headers
-RUN /etc/init.d/apache2 restart
-
-ENTRYPOINT ["/etc/init.d/apache2", "restart"]
-
-EXPOSE 80:8881
