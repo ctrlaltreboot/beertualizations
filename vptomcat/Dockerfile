@@ -1,0 +1,4 @@
+FROM tomcat:7.0.67-jre7
+
+ENV CATALINA_BIN $CATALINA_HOME/bin
+

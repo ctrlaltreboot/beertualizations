@@ -1,3 +1,7 @@
 .DS-Store
 *.rsa
 *.pub
+appconfs/*
+!/.vagrant/*
+!/.vagrant
+
