@@ -3,4 +3,5 @@ jenkins:
   ports:
     - 8088:8080
   volumes:
-    - /opt/jenkins:/var/jenkins_home
+    - /opt/jenkins:/var/jenkins_home:rw
+  user: jenkins
