@@ -6,6 +6,7 @@ nginx:
     - registry:registry
   volumes:
     - ./nginx/:/etc/nginx/conf.d:ro
+    - /opt/nginx:/opt/nginx:ro
 registry:
   image: registry:2
   ports:
