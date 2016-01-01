@@ -1,0 +1,28 @@
+nginx:
+  image: nginx:1.9
+  ports:
+    - '443:443'
+  links:
+    - registry:registry
+    - gogs:gogs
+  volumes:
+    - /opt/nginx/conf:/etc/nginx/conf.d:ro
+    - /opt/nginx/etc:/opt/nginx:ro
+gogs:
+  image: gogs/gogs
+  ports:
+    - '8022:22'
+    - '8030:3000'
+  volumes:
+    - /opt/gogs:/data:rw
+  volumes:
+    - ./nginx/:/etc/nginx/conf.d:ro
+    - /opt/nginx:/opt/nginx:ro
+registry:
+  image: registry:2
+  ports:
+    - '127.0.0.1:5000:5000'
+  environment:
+    REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+  volumes:
+    - /opt/registry:/data
