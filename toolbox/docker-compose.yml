@@ -8,6 +8,7 @@ nginx:
   volumes:
     - /opt/nginx/conf:/etc/nginx/conf.d:ro
     - /opt/nginx/etc:/opt/nginx:ro
+    - /opt/nginx/www:/opt/nginx/www:rw
 gogs:
   image: gogs/gogs
   ports:
