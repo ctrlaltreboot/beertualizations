@@ -15,9 +15,6 @@ gogs:
     - '127.0.0.1:8030:3000'
   volumes:
     - /opt/gogs:/data:rw
-  volumes:
-    - ./nginx/:/etc/nginx/conf.d:ro
-    - /opt/nginx:/opt/nginx:ro
 registry:
   image: registry:2
   ports:
