@@ -1,0 +1,8 @@
+ovpn:
+  image: kylemanna/openvpn
+  ports:
+    - '1194:1194'
+  volumes:
+    - /opt/openvpn:/etc/openvpn
+  cap_add:
+    - NET_ADMIN
