@@ -1,0 +1,94 @@
+web:
+  image: dock1.rebooter.xyz/vh-report-service-web:latest
+  ports:
+    - "5555:5555"
+  links:
+    - activemq
+  container_name: report-service-web
+  environment:
+    - "SPRING_PROFILES_ACTIVE=local"
+    - "SPRING_DATASOURCE_URL=jdbc:mysql://report-service-dev.chtuncvodrik.us-east-1.rds.amazonaws.com:3306/vh_report_service?autoReconnect=true"
+    - "SPRING_DATASOURCE_USERNAME=rptuser"
+    - "SPRING_DATASOURCE_PASSWORD=sgp123123"
+    - "SERVER_PORT=5555"
+    - "SERVER_CONTEXT_PATH=/vh-report-service"
+    - "SECURITY_USER_NAME=vh-report-user"
+    - "SECURITY_USER_PASSWORD=VHR-s3rvic3s"
+    - "SPRING_ACTIVEMQ_BROKER-URL=tcp://activemq:61616"
+    - "SPRING_ACTIVEMQ_USER=admin"
+    - "SPRING_ACTIVEMQ_PASSWORD=admin"
+    - "QUEUE_REPORT_ORDER=QUEUE.ReportService.ReportOrder"
+    - "SCHEDULER_INTERVAL=60000"
+  labels:
+    io.rancher.scheduler.affinity:host_label: location=us-east
+    io.rancher.scheduler.affinity:host_label: app=vh-report-service
+
+generator:
+  image: dock1.rebooter.xyz/vh-report-service-generator:latest
+  links:
+    - activemq
+  container_name: report-service-generator
+  environment:
+    - "SPRING_PROFILES_ACTIVE=local"
+    - "SPRING_DATASOURCE_URL=jdbc:mysql://report-service-dev.chtuncvodrik.us-east-1.rds.amazonaws.com:3306/vh_report_service?autoReconnect=true"
+    - "SPRING_DATASOURCE_USERNAME=rptuser"
+    - "SPRING_DATASOURCE_PASSWORD=sgp123123"
+    - "SPRING_ACTIVEMQ_BROKER-URL=tcp://activemq:61616"
+    - "SPRING_ACTIVEMQ_USER=admin"
+    - "SPRING_ACTIVEMQ_PASSWORD=admin"
+    - "SPRING_FREEMARKER_PREFER-FILE-SYSTEM-ACCESS=false"
+    - "SPRING_FREEMARKER_TEMPLATE-LOADER-PATH=classpath:/templates/freemarker"
+    - "IMPALA_JDBC_DRIVER=com.amazon.impala.jdbc4.Driver"
+    - "IMPALA_JDBC_URL=jdbc:impala://127.0.0.1:21050/;auth=noSasl"
+    - "QUEUE_REPORT_ORDER=QUEUE.ReportService.ReportOrder"
+    - "QUEUE_EMAIL_DELIVER=QUEUE.MailService.EmailDelivery"
+    - "AWS_REGION=us-east-1"
+    - "AWS_CREDENTIALS_ACCESS-KEY=AKIAJCLULZIQLGJZGJGA"
+    - "AWS_CREDENTIALS_SECRET-KEY=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"
+    - "AWS_S3_BUCKET-NAME=report-service-dev"
+    - "AWS_SERVER_TIMEZONE=America/New_York"
+  labels:
+    io.rancher.scheduler.affinity:host_label: location=us-east
+    io.rancher.scheduler.affinity:host_label: app=vh-report-service
+
+mail-service:
+  image: tsagitatremor/vh-mail-service:latest
+  links:
+    - activemq
+    - smtp
+  container_name: vh-mail-service
+  environment:
+    - "SPRING_PROFILES_ACTIVE=local"
+    - "SPRING_ACTIVEMQ_BROKER-URL=tcp://activemq:61616"
+    - "SPRING_ACTIVEMQ_USER=admin"
+    - "SPRING_ACTIVEMQ_PASSWORD=admin"
+    - "SPRING_MAIL_DEFAULT-ENCODING=UTF-8"
+    - "SPRING_MAIL_PORT=25"
+    - "SPRING_MAIL_HOST=smtp"
+    - "QUEUE_EMAIL_DELIVER=QUEUE.MailService.EmailDelivery"
+    - "QUEUE_EMAIL_DEADLETTER=QUEUE.MailService.DeadLetter"
+  labels:
+    io.rancher.scheduler.affinity:host_label: location=us-east
+    io.rancher.scheduler.affinity:host_label: app=vh-report-service
+
+activemq:
+  image: tsagitatremor/activemq:5.13.0
+  ports:
+     - "8161:8161"
+     - "61616:61616"
+  container_name: report-service-activemq
+  labels:
+    io.rancher.scheduler.affinity:host_label: location=us-east
+    io.rancher.scheduler.affinity:host_label: app=vh-report-service
+
+smtp:
+  image: namshi/smtp:latest
+  ports:
+    - "25:25"
+  container_name: smtp-server
+  environment:
+    - "SES_USER=AKIAIJ4HVKWIZBMFDZHQ"
+    - "SES_PASSWORD=AoF78VDcDMCUbaC/zixBeVjHyBAV9NrMy0Y6uaWwr066"
+  labels:
+    io.rancher.scheduler.affinity:host_label: location=us-east
+    io.rancher.scheduler.affinity:host_label: app=vh-report-service
